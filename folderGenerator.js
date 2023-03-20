@@ -1,6 +1,7 @@
 import http, { request } from 'http';
 import fs from 'fs';
 import fromModuleObjectHtmlGen from './htmlGenerator.js';
+import formModuleFuncFileNameGen from './fileNameGenerator.js';
 
 const server = http.createServer(function(req, res) {
   if(req.method === "GET" && req.url === '/') {
@@ -34,14 +35,21 @@ const server = http.createServer(function(req, res) {
       console.log(Day);
       console.log(Name);
 
-      function folderName(year, month, day, name, callback) {
-        let date = year + "-" + month + "-" + day + "_";
-        return callback(date, name);
-      }
-      
-      const makeTextFiles = folderName(Year, Month, Day, Name, function(date, name){
+      console.dir(formModuleFuncFileNameGen);
+
+      const makeTextFiles = formModuleFuncFileNameGen.fileName(Year, Month, Day, Name, function(date, name){
         return date + name;
       });
+
+      // 모듈로 따로 뺌
+      // function folderName(year, month, day, name, callback) {
+      //   let date = year + "-" + month + "-" + day + "_";
+      //   return callback(date, name);
+      // }
+      // const makeTextFiles = folderName(Year, Month, Day, Name, function(date, name){
+      //   return date + name;
+      // });
+
       fs.mkdirSync('./' + makeTextFiles);
       fs.writeFileSync('./' + makeTextFiles + '/' + makeTextFiles + ".txt", "생성완료");
     })
@@ -91,3 +99,8 @@ const server = http.createServer(function(req, res) {
 server.listen(2080, function(error) {
   if(error) { console.error('서버 안돌아감') } else { console.log('서버 돌아감'); }
   });
+
+  // 폴더를 조회해서 안에 파일들을 리스트로 만들어보기
+  // 1. 폴더를 읽어보고
+  // 2. 안에 있는 파일들의 이름을 데이터로 저장
+  // 3. 서버에서 출력
