@@ -1,6 +1,5 @@
 import http, { request } from 'http';
 import fs from 'fs';
-// import qs from 'qs';
 import fromModuleObjectHtmlGen from './htmlGenerator.js';
 
 const server = http.createServer(function(req, res) {
@@ -17,11 +16,14 @@ const server = http.createServer(function(req, res) {
     // let Day;
     // let Name;
     // <---------------  post 방식으로 데이터를 가져올 때  --------------->
+    // request.on('data', function()) 데이터 입력을 받아오는 메서드
     req.on('data', function(data){
+      // data를 받아왔으나 buffer(?) 형식으로 받아오므로 문자열로 바꿔줌
       let inputData = data.toString();
-      console.log(inputData);
+      console.log(inputData); // Year=1999&Month=06&day=30&name=rosumin 문자열 형식으로 출력되는 것 확인
+      // 문자열로 바꾼 데이터를 GET 방식 때와 동일하게 split() 메서드를 이용해 원하는 부분 추출
       const splitstring = inputData.split('&');
-      console.log(splitstring);
+      console.log(splitstring); // [ 'Year=1999', 'Month=06', 'day=30', 'name=rosumin' ]
       let Year = splitstring[0].split('=')[1];
       let Month = splitstring[1].split('=')[1];
       let Day = splitstring[2].split('=')[1];
