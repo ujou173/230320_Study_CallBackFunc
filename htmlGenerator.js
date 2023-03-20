@@ -16,7 +16,7 @@ const htmlGen = {
   },
   
   formTag: `
-  <form method="GET" action="/make">
+  <form method="POST" action="/make">
     <input type="text" name="Year" placeholder="Year">
     <input type="text" name="Month" placeholder="Month">
     <input type="text" name="day" placeholder="day">

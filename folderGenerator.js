@@ -1,5 +1,6 @@
-import http from 'http';
+import http, { request } from 'http';
 import fs from 'fs';
+// import qs from 'qs';
 import fromModuleObjectHtmlGen from './htmlGenerator.js';
 
 const server = http.createServer(function(req, res) {
@@ -11,33 +12,72 @@ const server = http.createServer(function(req, res) {
     res.end();
   }
   if(req.url.startsWith('/make')) {
-    // console.log(req.getParameter("name"));
-    console.log(req.url.split('='));
-    const splitFirst = req.url.split('=');
-    const splitYear = splitFirst[1].split("&");
-    const splitMonth = splitFirst[2].split("&");
-    const splitDay = splitFirst[3].split("&");
+    // let Year;
+    // let Month;
+    // let Day;
+    // let Name;
+    // <---------------  post 방식으로 데이터를 가져올 때  --------------->
+    req.on('data', function(data){
+      let inputData = data.toString();
+      console.log(inputData);
+      const splitstring = inputData.split('&');
+      console.log(splitstring);
+      let Year = splitstring[0].split('=')[1];
+      let Month = splitstring[1].split('=')[1];
+      let Day = splitstring[2].split('=')[1];
+      let Name = splitstring[3].split('=')[1];
 
-    const Year = splitYear[0];
-    const Month = splitMonth[0];
-    const Day = splitDay[0];
-    const Name = req.url.split('=')[4];
-    console.log("Year " + Year);
-    console.log("month " + Month);
-    console.log("day " + Day);
-    console.log("name " + Name);
+      console.log(Year);
+      console.log(Month);
+      console.log(Day);
+      console.log(Name);
 
-    function folderName(year, month, day, name, callback) {
-      let date = year + "-" + month + "-" + day + "_";
-      return callback(date, name);
-    }
+      function folderName(year, month, day, name, callback) {
+        let date = year + "-" + month + "-" + day + "_";
+        return callback(date, name);
+      }
+      
+      const makeTextFiles = folderName(Year, Month, Day, Name, function(date, name){
+        return date + name;
+      });
+      fs.mkdirSync('./' + makeTextFiles);
+      fs.writeFileSync('./' + makeTextFiles + '/' + makeTextFiles + ".txt", "생성완료");
+    })
+    // <---------------  post 방식으로 데이터를 가져올 때  --------------->
 
-    const makeTextFiles = folderName(Year, Month, Day, Name, function(date, name){
-      return date + name;
-    });
+    // <---------------  get 방식으로 데이터를 가져올 때  --------------->
+    // req.end('data', function(){
+    //   let post = qs.parse(body);
+    //   console.log(post);
+    // })
 
-    fs.mkdirSync('./' + makeTextFiles);
-    fs.writeFileSync('./' + makeTextFiles + '/' + makeTextFiles + ".txt", "생성완료");
+    // console.log(req.url.split('='));
+    // const splitFirst = req.url.split('=');
+    // const splitYear = splitFirst[1].split("&");
+    // const splitMonth = splitFirst[2].split("&");
+    // const splitDay = splitFirst[3].split("&");
+
+    // const Year = splitYear[0];
+    // const Month = splitMonth[0];
+    // const Day = splitDay[0];
+    // const Name = req.url.split('=')[4];
+    // console.log("Year " + Year);
+    // console.log("month " + Month);
+    // console.log("day " + Day);
+    // console.log("name " + Name);
+
+    // function folderName(year, month, day, name, callback) {
+    //   let date = year + "-" + month + "-" + day + "_";
+    //   return callback(date, name);
+    // }
+    
+    // const makeTextFiles = folderName(Year, Month, Day, Name, function(date, name){
+    //   return date + name;
+    // });
+    // fs.mkdirSync('./' + makeTextFiles);
+    // fs.writeFileSync('./' + makeTextFiles + '/' + makeTextFiles + ".txt", "생성완료");
+    // <---------------  get 방식으로 데이터를 가져올 때  --------------->
+
     res.statusCode = 200;
     res.setHeader = ('content-Type', 'text/plain');
     res.write("success");
